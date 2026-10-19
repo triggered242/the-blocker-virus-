@@ -1,0 +1,50 @@
+import os
+import time
+import ctypes
+import sys
+import getpass
+
+# Define the duration to block shutdown (in seconds)
+BLOCK_TIME_SECONDS = 3600  # 1 hour = 36000000seconds
+START_TIME = time.time()
+YOUR_NAME = "hacked by ghost"  # CHANGE THIS TO YOUR NAME
+
+def block_shutdown():
+    """Tells Windows to prevent system shutdown."""
+    reason = "Computer is locked for a 1-hour focus session."
+    success = ctypes.windll.user32.ShutdownBlockReasonCreate(0, reason)
+    return success
+
+def unblock_shutdown():
+    """Allows Windows to shut down normally."""
+    ctypes.windll.user32.ShutdownBlockDestroy()
+
+def verify_and_shutdown():
+    """Asks for the user's name and initiates shutdown if correct."""
+    print("\n⚠️ Shutdown blocked! Verification required.")
+    input_name = input("Enter your authorized name to proceed: ")
+    
+    if input_name.strip() == YOUR_NAME:
+        print("Access granted. Shutting down now...")
+        unblock_shutdown()
+        os.system("shutdown /s /t 0")
+    else:
+        print("❌ Access denied. Continuing to block shutdown.")
+
+# Start the blocking process
+block_shutdown()
+print(f"🔒 Shutdown is BLOCKED for {BLOCK_TIME_SECONDS // 60} minutes.")
+print("The script will run in the background. Press 'Ctrl+C' to stop it early.")
+
+try:
+    while time.time() - START_TIME < BLOCK_TIME_SECONDS:
+        # Check if the user is attempting to shut down the PC
+        # (Monitored through Windows API messages, simulated here by detecting exit commands)
+        time.sleep(10)
+        
+    print("\n⏱️ Time's up! The 1-hour block has ended.")
+    unblock_shutdown()
+
+except KeyboardInterrupt:
+    print("\n🛑 Program stopped by user. Shutdown block removed.")
+    unblock_shutdown()
